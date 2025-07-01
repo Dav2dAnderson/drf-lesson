@@ -70,7 +70,6 @@ class PostAPIView(views.APIView):
     
 
 
-
 class ArticleViewSet(viewsets.ViewSet):
     def list(self, request):
         articles = Article.objects.all()
@@ -89,5 +88,23 @@ class ArticleViewSet(viewsets.ViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.error_messages)
 
+    def destroy(self, request, pk):
+        try:
+            article = Article.objects.get(pk=pk)
+            article.delete()
+            return Response({'detail': "O'chirildi."})
+        except Article.DoesNotExist:
+            return Response({'detail': "Ma'lumot topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+        
+    def update(self, request, pk):
+        try:
+            article = Article.objects.get(pk=pk)
+            serializer = ArticleSerializer(article, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.error_messages)
+        except Article.DoesNotExist:
+            return Response({'detail': "Ma'lumot topilmadi"})
         
     
