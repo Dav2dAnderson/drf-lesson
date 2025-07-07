@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from rest_framework import views, viewsets, status
+from rest_framework import views, viewsets, status, permissions
 from rest_framework.response import Response
 
 from .serializers import PostSerializer, ArticleSerializer
@@ -10,6 +10,8 @@ from .models import Post, Article
 
 # APIView: get, post, put, patch, delete
 # ViewSet: list, retrieve, create, destroy, update
+
+# User Authentification: APIView, Token
 
 
 class PostAPIView(views.APIView):
@@ -71,6 +73,7 @@ class PostAPIView(views.APIView):
 
 
 class ArticleViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
     def list(self, request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)
