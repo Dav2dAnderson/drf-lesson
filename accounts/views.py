@@ -4,11 +4,14 @@ from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 
-from .serializers import CustomUserLoginSerializer, CustomUserRegisterSerializer
+from .serializers import CustomUserLoginSerializer, CustomUserRegisterSerializer, UserProfileSerializer, CommentsSerializer
+from .models import CustomUser, Comment
+
 
 # User Registration: APIView
+# User Logout: APIView
 # Create your views here.
 
 
@@ -39,4 +42,26 @@ class UserRegisterAPIView(APIView):
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+class UserLogOutAPIView(APIView):
+    def post(self, request):
+        request.user.auth_token.delete()
+        return Response({'detail': "Logged Out."}, status=status.HTTP_200_OK)
     
+
+class UserProfileAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        user = self.request.user
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data)
+    
+
+class UserCommentsAPIView(APIView):
+    permission_classes = []
+    def get(self, request):
+        comments = Comment.objects.filter(author=self.request.user)
+        serializer = CommentsSerializer(comments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+ 

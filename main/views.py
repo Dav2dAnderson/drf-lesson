@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from .serializers import PostSerializer, ArticleSerializer
 from .models import Post, Article
+from .permissions import IsAdminOrReadOnly
 # Create your views here.
 """Meta class short description | APIView: get, post"""
 
@@ -73,7 +74,7 @@ class PostAPIView(views.APIView):
 
 
 class ArticleViewSet(viewsets.ViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsAdminOrReadOnly] # "," = and  "|" = or
     def list(self, request):
         articles = Article.objects.all()
         serializer = ArticleSerializer(articles, many=True)

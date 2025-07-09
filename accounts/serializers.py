@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from django.contrib.auth import get_user_model
 
-from .models import CustomUser
+from .models import CustomUser, Comment
 
 
 class CustomUserLoginSerializer(serializers.ModelSerializer):
@@ -40,3 +40,13 @@ class CustomUserRegisterSerializer(serializers.ModelSerializer):
         return user
     
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'phone_number']
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['id', 'author', 'post', 'comment', 'written_time']
